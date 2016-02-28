@@ -18,13 +18,13 @@ module test;
     initial begin
         $dumpfile("dump.vcd");
         $dumpvars;
-        cin = 0;
+        cin = 1;
         i = 0;
     end
 
     adder uut(
         .i_a(a),
-        .i_b(b),
+        .i_b(~b),
         .i_cin(cin),
         .o_result(result),
         .o_cout(cout)
@@ -38,13 +38,13 @@ module test;
 
     always @(negedge clk_reg) begin
         if (corr_res != result)
-            $strobe("Strobe Incorrect Result! %d + %d = %d, correct = %d", a, b, result, corr_res);
+            $strobe("Strobe Incorrect Result! %d - %d = %d, correct = %d", a, b, result, corr_res);
     end
     
     always @(posedge clk_reg) begin
         a <= $random;
         b <= $random;
-        #1 corr_res <= a+b;
+        #1 corr_res <= a-b;
         
         i = i + 1;
         if (i >= `TESTS)
