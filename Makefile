@@ -10,7 +10,7 @@ all: $(BINS)
 	iverilog $(VFLAGS) $< -o $@
 
 clean:
-	rm -fv *.run Makefile.deps
+	rm -fv *.run *.vcd *.out Makefile.deps
 
 
 .INTERMEDIATE: $(BINS:.run=.v.dep)
