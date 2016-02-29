@@ -6,8 +6,6 @@
 
 module test;
 
-    reg [32+32-1:0] tests[0:`TESTS];
-    
     reg [31:0] a, b, corr_res;
     reg cin;
     
