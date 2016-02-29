@@ -1,13 +1,17 @@
 `include "mux.v"
 
-`ifndef TESTS
-`define TESTS 32
+`ifndef WIDTH
+`define WIDTH 16
+`endif
+
+`ifndef CHANNELS
+`define CHANNELS 4
 `endif
 
 module test;
 
-    reg[31:0] data;
-    reg[4:0] select;
+    reg[`WIDTH-1:0] data;
+    reg[`CHANNELS-1:0] select;
     wire result;
 
     initial begin
@@ -23,7 +27,7 @@ module test;
     wire clk;
     assign clk = clk_reg;
 
-    mux #(.width(32), .channels(5)) uut(data, select, result);
+    mux #(.width(`WIDTH), .channels(`CHANNELS)) uut(data, select, result);
 
     always #5 clk_reg <= ~clk_reg;
 
@@ -35,7 +39,7 @@ module test;
     always @(posedge clk) begin
         select <= select + 1;
         #1 corr_res <= data[select];
-        if (select >= `TESTS - 1)
+        if (select >= `WIDTH - 1)
             #10 $finish;
     end
 endmodule
