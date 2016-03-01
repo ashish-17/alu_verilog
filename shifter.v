@@ -24,6 +24,7 @@ module shifter(
     input[`WIDTH - 1:0] i_data,
     input[`SHIFT_WIDTH - 1:0] i_shift,
     input[`OPS - 1:0] i_op,
+    input i_start,
     output[`WIDTH - 1:0] o_result);
     
     reg[`WIDTH - 1:0] zeroes;
@@ -62,14 +63,16 @@ module shifter(
         end
     endgenerate
 
-    always @(i_data or i_shift or i_op) begin
-        case (i_op)
-            `LEFT_SHIFTA: result <= {i_data[`WIDTH - 1], left[`WIDTH - 2:0]};
-            `LEFT_SHIFTL: result <= left;
-            `RIGHT_SHIFTA: result <= i_data[`WIDTH-1] == 1'b1 ? rightA : right;
-            `RIGHT_SHIFTL: result <= right;
-            default: $display("Error!");
-        endcase
+    always @(i_data or i_shift or i_op or i_start) begin
+        if (i_start) begin
+            case (i_op)
+                `LEFT_SHIFTA: result <= {i_data[`WIDTH - 1], left[`WIDTH - 2:0]};
+                `LEFT_SHIFTL: result <= left;
+                `RIGHT_SHIFTA: result <= i_data[`WIDTH-1] == 1'b1 ? rightA : right;
+                `RIGHT_SHIFTL: result <= right;
+                default: $display("Error!");
+            endcase
+        end
     end
 endmodule
 `endif

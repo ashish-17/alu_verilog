@@ -13,6 +13,7 @@ module test;
     reg[`WIDTH-1:0] corr_result;
     reg[`WIDTH-1:0] test_vals[0:`TESTS-1];
     reg[`SHIFT_WIDTH-1:0] test_shifts[0:`TESTS-1];
+    reg start;
     
     reg[`WIDTH-1:0] tests;
 
@@ -29,6 +30,7 @@ module test;
         data = 0;
         shift = test_shifts[0];
         tests = 0;
+        start = 1'b1;
     end
 
     reg clk_reg = 1'b0;
@@ -37,7 +39,7 @@ module test;
 
     always #5 clk_reg <= ~clk_reg;
 
-    shifter uut(data, shift, op, result);
+    shifter uut(data, shift, op, start, result);
 
     always @(negedge clk) begin
         case (op)

@@ -2,6 +2,9 @@
 `define ALU_V
 
 `include "adder.v"
+`include "multiplier.v"
+`include "divider.v"
+`include "shifter.v"
 
 `define OP_NOP          4'h0
 `define OP_ADD          4'h1
@@ -63,6 +66,45 @@ wire subtractor_cout;
 wire[31:0] subtractor_result;
 adder alu_subtractor(.i_a(i_a), .i_b(~i_b), .i_cin(subtractor_cin), .o_result(subtractor_result), .o_cout(subtractor_cout));
 
+// Multiplier
+reg multiplier_start = 1'b0;
+wire[`WIDTH + `WIDTH - 1:0] multiplier_result;
+wire multiplier_ready;
+
+multiplier mul(
+    .start(multiplier_start),
+    .clk(clk),
+    .multiplier(i_a),
+    .multiplicand(i_b),
+    .product(multiplier_result),
+    .ready(multiplier_ready));
+
+// Divider
+reg divider_start = 1'b0;
+wire[`WIDTH-1:0] divider_quotient, divider_remainder;
+wire divider_ready;
+
+divider div(
+    .start(divider_start),
+    .clk(clk),
+    .dividend(i_b),
+    .divisor(i_a),
+    .quotient(divider_quotient),
+    .remainder(divider_remainder),
+    .ready(divider_ready));
+
+// Shifter
+reg[`OPS-1:0] shifter_ops;
+wire[`WIDTH-1:0] shifter_result;
+reg shifter_start = 1'b0;
+
+shifter shift(
+    .i_data(i_a),
+    .i_shift(i_b[`SHIFT_WIDTH-1:0]),
+    .i_op(shifter_ops),
+    .i_start(shifter_start),
+    .o_result(shifter_result));
+
 // Main processing loop
 always @(posedge clk && !reset) begin
 
@@ -81,33 +123,52 @@ always @(posedge clk && !reset) begin
         end
 
         `OP_MUL: begin
-            reg_result = i_a * i_b;
+            multiplier_start = 1'b1;
+            reg_result = multiplier_result[`WIDTH-1:0];
         end
 
         `OP_DIV: begin
-            reg_result = i_a / i_b;
+            divider_start = 1'b1;
+            reg_result = divider_quotient;
         end
 
         `OP_LEFT_SHIFTL: begin
-            reg_result = i_a << i_b;
+            shifter_ops = `LEFT_SHIFTL;
+            shifter_start = 1'b1;
+            reg_result = shifter_result;
         end
 
         `OP_LEFT_SHIFTA: begin
-            reg_result = i_a <<< i_b;
+            shifter_ops = `LEFT_SHIFTA;
+            shifter_start = 1'b1;
+            reg_result = shifter_result;
         end
 
         `OP_RIGHT_SHIFTL: begin
-            reg_result = i_a >> i_b;
+            shifter_ops = `RIGHT_SHIFTL;
+            shifter_start = 1'b1;
+            reg_result = shifter_result;
         end
 
         `OP_RIGHT_SHIFTA: begin
-            reg_result = i_a >>> i_b;
+            shifter_ops = `RIGHT_SHIFTA;
+            shifter_start = 1'b1;
+            reg_result = shifter_result;
         end
     endcase
   end
   `ST_BUSY: begin
-    reg_valid <= 1'b1;
-    reg_status <= `ST_READY;
+    if (divider_ready == 1'b1 && multiplier_ready == 1'b1) begin
+        reg_valid <= 1'b1;
+        reg_status <= `ST_READY;
+    end
+
+    shifter_start = 1'b0;
+    if (divider_ready == 1'b0)
+        divider_start = 1'b0;
+    
+    if (multiplier_ready == 1'b0)
+        multiplier_start = 1'b0;
   end
   default: begin
     $display("should not happen");

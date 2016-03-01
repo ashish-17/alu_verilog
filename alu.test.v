@@ -25,11 +25,13 @@ reg done = 1'b0;
 
 // This is not synthetizable
 integer i;
+integer tmp;
 
 // Initial block
 initial begin
   for(i = 0; i < `TESTS; i = i + 1) begin
-    tests[i] <= {{$random},{$random}};
+      tmp = $random % 5;
+    tests[i] <= {{$random},{tmp}};
   end
 end
 
@@ -51,8 +53,8 @@ end
 always @(posedge alu_ready) begin
    a <= tests[t][63:32];
    b <= tests[t][31:0];
-   op <= `OP_ADD;
-   res <= tests[t][63:32] + tests[t][31:0];
+   op <= `OP_LEFT_SHIFTL;
+   res <= tests[t][63:32] << tests[t][31:0];
    if (t + 1 < `TESTS)
      t = t + 1;
    else begin
