@@ -1,9 +1,9 @@
 `include "alu.v"
 `include "sim.v"
 
-`ifndef TESTS
-`define TESTS 32
-`endif
+`define TESTS_ADDER 100
+`define TESTS_SUBTRACTOR 100
+`define TESTS 200
 
 module test();
 
