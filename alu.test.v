@@ -53,8 +53,8 @@ end
 always @(posedge alu_ready) begin
    a <= tests[t][63:32];
    b <= tests[t][31:0];
-   op <= `OP_LEFT_SHIFTL;
-   res <= tests[t][63:32] << tests[t][31:0];
+   op <= `OP_ADD;
+   res <= tests[t][63:32] + tests[t][31:0];
    if (t + 1 < `TESTS)
      t = t + 1;
    else begin
