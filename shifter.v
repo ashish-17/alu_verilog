@@ -41,7 +41,7 @@ module shifter(
     wire[`WIDTH - 1: 0] rightA;
 
     assign o_result = result;
-
+    
     genvar i;
 
     generate
@@ -63,10 +63,10 @@ module shifter(
         end
     endgenerate
 
-    always @(i_data or i_shift or i_op or i_start) begin
+    always @* begin
         if (i_start) begin
             case (i_op)
-                `LEFT_SHIFTA: result <= {i_data[`WIDTH - 1], left[`WIDTH - 2:0]};
+                `LEFT_SHIFTA: result <= left;
                 `LEFT_SHIFTL: result <= left;
                 `RIGHT_SHIFTA: result <= i_data[`WIDTH-1] == 1'b1 ? rightA : right;
                 `RIGHT_SHIFTL: result <= right;

@@ -6,15 +6,15 @@
 `include "divider.v"
 `include "shifter.v"
 
-`define OP_NOP          4'h0
-`define OP_ADD          4'h1
-`define OP_SUB          4'h2
-`define OP_MUL          4'h3
-`define OP_DIV          4'h4
-`define OP_LEFT_SHIFTL  4'h5
-`define OP_LEFT_SHIFTA  4'h6
-`define OP_RIGHT_SHIFTL 4'h7
-`define OP_RIGHT_SHIFTA 4'h8
+`define OP_NOP          4'b0000
+`define OP_ADD          4'b0001
+`define OP_SUB          4'b0010
+`define OP_MUL          4'b0011
+`define OP_DIV          4'b0100
+`define OP_LEFT_SHIFTL  4'b0101
+`define OP_LEFT_SHIFTA  4'b0110
+`define OP_RIGHT_SHIFTL 4'b0111
+`define OP_RIGHT_SHIFTA 4'b1000
 
 // Simple single cycle adder
 module alu(
